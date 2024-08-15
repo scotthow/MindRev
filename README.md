@@ -38,6 +38,8 @@ A key innovation of MindRev is the implementation of trust mechanics. This featu
 
  ![character_creation](md_images/character_creation.png)
 
+ ---
+
  ![sabrina_chat](md_images/sabrina_chat.png)
  
 
@@ -53,7 +55,9 @@ Our plot generation process uses Plot Rubric, an iterative refinement system tha
 - We construct what we call **inter-character events**; this is a device we use to drive the narrative within the structure of a text-based interactive game.
 - Events are stored away; game progression determines what information is fed to which NPC at which time.
 
- ![plot_generation](md_images/plot_generation.png)
+---
+
+![plot_generation](md_images/plot_generation.png)
 
 
 ## Attribution
