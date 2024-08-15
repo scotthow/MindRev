@@ -50,7 +50,7 @@ Our concept involves developing customized plot generation templates for various
 Our plot generation process uses Plot Rubric, an iterative refinement system that employs two specialized AI models: a Creative Agent to develop characters and storylines, and a Critic Agent to evaluate and improve them. This approach ensures compelling plots and well-developed characters.
 
  
-## Event Generation
+### Events
 
 - We construct what we call **inter-character events**; this is a device we use to drive the narrative within the structure of a text-based interactive game.
 - Events are stored away; game progression determines what information is fed to which NPC at which time.
