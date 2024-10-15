@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTH Games - NPC Chat</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .scene {
+            width: 450px;  /* Reduced from 500px */
+            height: 450px; /* Reduced from 500px */
+            perspective: 1000px;
+            margin: 50px auto;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Speed of turn; Added cubic-bezier */
+        }
+
+        .cube__face {
+            position: absolute;
+            width: 475px;  /* Reduced from 500px */
+            height: 475px; /* Reduced from 500px */
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .cube__face--front  { transform: rotateY(  0deg) translateZ(237.5px); }  /* Adjusted translateZ, size of side. 450px with 225px or 475px with 237.5px */
+        .cube__face--right  { transform: rotateY( 90deg) translateZ(237.5px); }  /* Adjusted translateZ, size of side */
+        .cube__face--back   { transform: rotateY(180deg) translateZ(237.5px); }  /* Adjusted translateZ, size of side */
+        .cube__face--left   { transform: rotateY(-90deg) translateZ(237.5px); }  /* Adjusted translateZ, size of side */
+
+        .npc-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            display: block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-box {
+            width: 100%;
+            height: 150px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fafafa;
+            font-size: 12px;
+            box-sizing: border-box;
+            transition: height 0.3s ease;
+        }
+
+        .cube__face:hover .chat-box {
+            height: 300px;
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            border-radius: 4px;
+            background-color: rgba(0,0,0,.5);
+            -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+        }
+
+        .input-group {
+            display: flex;
+            width: 100%;
+        }
+
+        .input-group input {
+            flex-grow: 1;
+            margin-right: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #ffffff;
+            color: #333;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            box-shadow: 0 0 3px #f20593;
+        }
+
+        .input-group button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f20593;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 12px;
+        }
+
+        .input-group button:hover {
+            background-color: #16dddd;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .controls button, .controls .btn-custom {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .controls button {
+            background-color: #959393;
+        }
+
+        .controls button:hover, .controls .btn-custom:hover {
+            background-color: #16dddd;
+            transform: translateY(-2px);
+        }
+
+        .controls .btn-custom {
+            background-color: #f20593;
+        }
+
+        .cube-container {
+            perspective: 1000px;
+            transition: perspective-origin 0.8s;
+        }
+    </style>
+</head>
+<body>
+    <div class="scene">
+        <div class="cube">
+            {% for npc_name, npc in npcs.items() %}
+            <div class="cube__face cube__face--{{ ['front', 'right', 'back'][loop.index0] }}">
+                <h2>{{ npc.name }}</h2>
+                <img src="{{ npc.image_file }}" alt="{{ npc.name }}" class="npc-image">
+                <div id="chat-box-{{ npc_name }}" class="chat-box"></div>
+                <div class="input-group">
+                    <input type="text" id="input-{{ npc_name }}" placeholder="Type your message...">
+                    <button onclick="sendMessage('{{ npc_name }}')">Send</button>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="cube__face cube__face--left"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="rotateCube('left')">Previous NPC</button>
+        <button onclick="rotateCube('right')">Next NPC</button>
+        <a href="{{ url_for('main.home') }}" class="btn btn-custom">Return Home</a>
+    </div>
+
+    <script>
+        let currentRotation = 0;
+        let currentFace = 0; // 0: front, 1: right, 2: back, 3: left
+        const cube = document.querySelector('.cube');
+
+        function rotateCube(direction) {
+            if (direction === 'right') {
+                currentRotation -= 90;
+                currentFace = (currentFace + 1) % 4;
+            } else if (direction === 'left') {
+                currentRotation += 90;
+                currentFace = (currentFace - 1 + 4) % 4;
+            }
+
+            cube.style.transform = `rotateY(${currentRotation}deg)`;
+            
+            // Update the perspective origin
+            const container = cube.parentElement;
+            
+            let perspectiveOriginX, perspectiveOriginY;
+            
+            switch(currentFace) {
+                case 0: // front
+                    perspectiveOriginX = '50%';
+                    perspectiveOriginY = '50%';
+                    break;
+                case 1: // right
+                    perspectiveOriginX = '75%';
+                    perspectiveOriginY = '50%';
+                    break;
+                case 2: // back
+                    perspectiveOriginX = '50%';
+                    perspectiveOriginY = '50%';
+                    break;
+                case 3: // left
+                    perspectiveOriginX = '25%';
+                    perspectiveOriginY = '50%';
+                    break;
+            }
+            
+            container.style.perspectiveOrigin = `${perspectiveOriginX} ${perspectiveOriginY}`;
+            
+            updateZIndex();
+        }
+
+        // function updateZIndex() {
+        //     const faces = document.querySelectorAll('.cube__face');
+        //     faces.forEach((face, index) => {
+        //         face.style.zIndex = (index === currentFace) ? '1' : 'auto';
+        //     });
+        // }
+    
+
+        function sendMessage(npcName) {
+            const input = document.getElementById(`input-${npcName}`);
+            const chatBox = document.getElementById(`chat-box-${npcName}`);
+            const message = input.value.trim();
+
+            if (message) {
+                chatBox.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
+                input.value = '';
+
+                // Send message to server and get response
+                fetch('/npc-chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ npc_name: npcName, message: message }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    chatBox.innerHTML += `<p><strong>${npcName}:</strong> ${data.response}</p>`;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        function setupChatBoxScrolling() {
+            const chatBoxes = document.querySelectorAll('.chat-box');
+            chatBoxes.forEach(chatBox => {
+                chatBox.addEventListener('mouseover', () => {
+                    chatBox.style.overflowY = 'scroll';
+                });
+                chatBox.addEventListener('mouseout', () => {
+                    chatBox.style.overflowY = 'hidden';
+                });
+                
+                // Enable wheel scrolling even when not hovered
+                chatBox.addEventListener('wheel', (event) => {
+                    event.preventDefault();
+                    chatBox.scrollTop += event.deltaY;
+                });
+            });
+        }
+
+        function setupEnterKeyListener() {
+            const inputs = document.querySelectorAll('.input-group input');
+            inputs.forEach(input => {
+                input.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        const npcName = this.id.split('-')[1];
+                        sendMessage(npcName);
+                    }
+                });
+            });
+        }
+
+        // Initialize everything when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setupChatBoxScrolling();
+            updateZIndex();
+            setupEnterKeyListener();
+            
+            // Set up rotation buttons
+            const rotateRightButton = document.querySelector('button[onclick="rotateCube(\'right\')"]');
+            const rotateLeftButton = document.querySelector('button[onclick="rotateCube(\'left\')"]');
+            
+            if (rotateRightButton) rotateRightButton.addEventListener('click', () => rotateCube('right'));
+            if (rotateLeftButton) rotateLeftButton.addEventListener('click', () => rotateCube('left'));
+        });
+
+        // Log to confirm the script is running
+        console.log('NPC Chat script loaded');
+    </script>
+</body>
+</html>

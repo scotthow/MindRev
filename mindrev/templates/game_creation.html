@@ -1,0 +1,725 @@
+{% extends "base.html" %}
+
+{% block title %}MindRev - Game Creation{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{{ url_for('main.home') }}" class="btn btn-custom">Return Home</a>
+        <h1 class="mb-0">Game Creation</h1>
+        <div style="width: 135px;"></div> <!-- Placeholder for alignment -->
+    </div>
+
+    <div class="accordion" id="gameCreationAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingInstructions">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInstructions" aria-expanded="true" aria-controls="collapseInstructions">
+                    Instructions
+                </button>
+            </h2>
+            <div id="collapseInstructions" class="accordion-collapse collapse show" aria-labelledby="headingInstructions" data-bs-parent="#gameCreationAccordion">
+                <div class="accordion-body">
+                    <!-- <h5>IMPORTANT RULES FOR GAME CREATION:</h5> -->
+                    <ul>
+                        <li>This is a <span class="text-primary">CreativeAI</span> assisted portal for creating <span class="text-danger">thrilling educational adventures</span>!</li>
+                        <li>The <span class="text-primary">player</span> will be embedded into a <span class="text-danger">social event</span> that brings together <span class="text-primary">3 mysterious NPCs</span> with whom the player will interact.</li>
+                        <li>You will create <span class="text-primary">Quests</span> that challenge the player with tasks, which, when solved, unlock clues to help them solve a mystery.</li>
+                        <li>Each NPC</span> will take on a <span class="text-primary">role</span> related to the educational concept you wish to design the game around.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion" id="gameCreationAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingStoryInputs">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStoryInputs" aria-expanded="false" aria-controls="collapseStoryInputs">
+                            Story Inputs
+                        </button>
+                    </h2>
+                    <div id="collapseStoryInputs" class="accordion-collapse collapse" aria-labelledby="headingStoryInputs" data-bs-parent="#gameCreationAccordion">
+                        <div class="accordion-body">
+                            <div class="mb-3">
+                                <label for="educationalTopic" class="form-label">Educational Topic</label>
+                                <select class="form-select" id="educationalTopic">
+                                    <option selected>Choose a topic</option>
+                                    <option value="Algorithmic Trading">Algorithmic Trading</option>
+                                    <option value="Natural Language Processing">Natural Language Processing</option>
+                                    <option value="Quantum Computing">Quantum Computing</option>
+                                    <option value="Reinforcement Learning">Reinforcement Learning</option>
+                                    <option value="Robotics">Robotics</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="storyGenre" class="form-label">Story Genre</label>
+                                <select class="form-select" id="storyGenre" disabled>
+                                    <option selected>Choose a genre</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="storyElement" class="form-label">Story Element</label>
+                                <select class="form-select" id="storyElement">
+                                    <option selected>Choose an element</option>
+                                    <option value="Horror">Horror</option>
+                                    <option value="Revenge">Revenge</option>
+                                    <option value="Love Triangle">Romance</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingStorySetting">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStorySetting" aria-expanded="false" aria-controls="collapseStorySetting">
+                        Story Setting
+                    </button>
+                </h2>
+                <div id="collapseStorySetting" class="accordion-collapse collapse" aria-labelledby="headingStorySetting" data-bs-parent="#gameCreationAccordion">
+                    <div class="accordion-body">
+                        <div id="storySettingContent">
+                            <div class="mb-3">
+                                <label for="eventName" class="form-label">Event Name</label>
+                                <input type="text" class="form-control" id="eventName" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventDescription" class="form-label">Event Description</label>
+                                <textarea class="form-control" id="eventDescription" rows="3" readonly></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventPurpose" class="form-label">Event Purpose</label>
+                                <textarea class="form-control" id="eventPurpose" rows="2" readonly></textarea>
+                            </div>
+                            <div class="mt-3">
+                                <button id="generateStorySetting" class="btn-generate">Generate Story Setting</button>
+                                <button id="regenerateStorySetting" class="btn-regenerate">Regenerate</button>
+                                <span id="thinkingStorySetting" class="thinking">Thinking...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            
+
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingCharacterCreation">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCharacterCreation" aria-expanded="false" aria-controls="collapseCharacterCreation">
+                        Character Creation
+                    </button>
+                </h2>
+                <div id="collapseCharacterCreation" class="accordion-collapse collapse" aria-labelledby="headingCharacterCreation" data-bs-parent="#gameCreationAccordion">
+                    <div class="accordion-body">
+                        <div class="row mb-4">
+                            {% for i in range(1, 4) %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">NPC {{ i }}</h5>
+                                        <div class="character-placeholder mb-3">
+                                            <video id="character{{ i }}Video" class="custom-video-border" width="100%" height="auto" loop muted>
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </div>
+                                        <div id="character{{ i }}Info">
+                                            <p><strong>Name:</strong> <span id="character{{ i }}Name"></span></p>
+                                            <p><strong>Gender:</strong> <span id="character{{ i }}Gender"></span></p>
+                                            <p><strong>Profession:</strong> <span id="character{{ i }}Profession"></span></p>
+                                            <p><strong>Expertise:</strong> <span id="character{{ i }}Expertise"></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-3">
+                            <button id="generateCharactersBtn" class="btn-generate">Generate Characters</button>
+                            <button id="regenerateCharactersBtn" class="btn-regenerate" style="display: none;">Regenerate</button>
+                            <span id="thinkingCharacters" class="thinking" style="display: none;">Thinking...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+     
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingCharacterDevelopment">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCharacterDevelopment" aria-expanded="false" aria-controls="collapseCharacterDevelopment">
+                        Character Development
+                    </button>
+                </h2>
+                <div id="collapseCharacterDevelopment" class="accordion-collapse collapse" aria-labelledby="headingCharacterDevelopment" data-bs-parent="#gameCreationAccordion">
+                    <div class="accordion-body">
+                        <div class="row">
+                            {% for i in range(1, 4) %}
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">NPC {{ i }}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <strong>Job Title:</strong>
+                                            <span id="jobTitle{{ i }}"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <strong>Backstory:</strong>
+                                            <span id="backstory{{ i }}"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <strong>Secret:</strong>
+                                            <span id="secret{{ i }}"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <strong>Relationships:</strong>
+                                            <span id="relationships{{ i }}"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <strong>Personality:</strong>
+                                            <span id="personality{{ i }}"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <strong>Speaking Tone and Style:</strong>
+                                            <span id="speakingStyle{{ i }}"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <strong>Hobby:</strong>
+                                            <span id="hobby{{ i }}"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <strong>Artifact:</strong>
+                                            <span id="artifact{{ i }}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-3">
+                            <button id="generatePersonas" class="btn-generate">Generate Personas</button>
+                            <button id="regeneratePersonas" class="btn-regenerate" style="display: none;">Regenerate</button>
+                            <span id="thinkingPersonas" class="thinking" style="display: none;">This might take a while...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingEventGeneration">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEventGeneration" aria-expanded="false" aria-controls="collapseEventGeneration">
+                        Event Generation
+                    </button>
+                </h2>
+                <div id="collapseEventGeneration" class="accordion-collapse collapse" aria-labelledby="headingEventGeneration" data-bs-parent="#gameCreationAccordion">
+                    <div class="accordion-body">
+                        <div id="eventGenerationContent">
+                            <p>Generate a series of events for your game's storyline.</p>
+                        </div>
+                        <div id="generatedEventsContent" style="display: none;">
+                            <div id="seriesAEvents"></div>
+                            <div id="seriesBEvents"></div>
+                            <div id="seriesCEvents"></div>
+                        </div>
+                        <button id="generateEventsBtn" class="btn-generate">Generate Events</button>
+                        <!-- Remember to uncomment javascript code to enable button -->
+                        <!-- <button id="regenerateEventsBtn" class="btn btn-regenerate" style="display: none;">Regenerate</button> -->
+                        <div id="thinkingEvents" class="thinking" style="display: none;">
+                            Thinking hard. This might take a while...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingQuestGeneration">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQuestGeneration" aria-expanded="false" aria-controls="collapseQuestGeneration">
+                        Quest Generation
+                    </button>
+                </h2>
+                <div id="collapseQuestGeneration" class="accordion-collapse collapse" aria-labelledby="headingQuestGeneration" data-bs-parent="#gameCreationAccordion">
+                    <div class="accordion-body">
+                        <div id="questGenerationContent">
+                            <p>Generate quests for your game based on the events you've created.</p>
+                            <div id="generatedQuestsContent" style="display: none;">
+                                <h3>Generated Quests</h3>
+                                <div id="questsAccordion" class="accordion mt-3">
+                                    <!-- Quests will be dynamically inserted here -->
+                                </div>
+                            </div>
+                            <button id="generateQuestsBtn" class="btn-generate">Generate Quests</button>
+                            <!-- Added margin-top and margin-bottom to create separation -->
+                            <button id="regenerateQuestsBtn" class="btn btn-generate mt-3 mb-3" style="display: none;">Regenerate</button>
+                            <div id="thinkingQuests" class="thinking" style="display: none;">
+                                Thinking really really hard. This might take a while...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingReview">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReview" aria-expanded="false" aria-controls="collapseReview">
+                        Review
+                    </button>
+                </h2>
+                <div id="collapseReview" class="accordion-collapse collapse" aria-labelledby="headingReview" data-bs-parent="#gameCreationAccordion">
+                    <div class="accordion-body">
+                        <h5>Test Your Characters</h5>
+                        <p>Ready to interact with your created characters? Test them out in our chat interface!</p>
+                        <a href="{{ url_for('npc_chat.npc_chat') }}" class="btn btn-primary mb-3">Go to NPC Chat</a>
+                        
+                        <h5>Download Synopsis</h5>
+                        <p>Get a summary of your created game universe.</p>
+                        <button class="btn btn-secondary" disabled>Download Synopsis (Coming Soon)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Footer -->
+<!-- <footer class="footer mt-auto py-3 bg-light">
+    <div class="container">
+        <span class="text-muted">Determine your destiny</span>
+    </div>
+</footer> -->
+
+{% endblock %}
+
+<!-- {% block extra_css %}
+<style>
+    html, body {
+        height: 100%;
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+    .container {
+        flex: 1;
+    }
+    .footer {
+        position: static;
+        bottom: 0;
+        width: 100%;
+    }
+    .accordion-button:not(.collapsed) {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+    .accordion-button:focus {
+        box-shadow: none;
+    }
+    .btn-generate {
+        background-color: #a07bcc;
+        color: #fff;
+        border: none;
+        /* padding: 10px 20px; */
+        cursor: finger;
+        /* margin-right: 10px; */
+    }
+
+    .btn-generate:hover {
+        background-color: #b19cd9;
+    }
+
+    .btn-regenerate {
+        background-color: #b19cd9;
+        color: #fff;
+        border: none;
+        /* padding: 10px 20px; */
+        display: none;
+        cursor: finger;
+        /* margin-right: 10px; */
+    }
+
+    .btn-regenerate:hover {
+        background-color: #6c757d;
+    }
+    .thinking {
+        display: none;
+        font-style: italic;
+        color: #6c757d;
+    }
+</style>
+{% endblock %} -->
+
+
+<!-- Extra JS code for the game_creation.html template: -->
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const educationalTopic = document.getElementById('educationalTopic');
+    const storyGenre = document.getElementById('storyGenre');
+
+    const genreOptions = {
+        'Algorithmic Trading': ['Finance', 'Politics', 'Education'],
+        'Natural Language Processing': ['Healthcare', 'Politics', 'Education'],
+        'Quantum Computing': ['Finance', 'Politics', 'Education'],
+        'Reinforcement Learning': ['Finance', 'Healthcare', 'Politics', 'Education'],
+        'Robotics': ['Healthcare', 'Politics', 'Education']
+    };
+
+    educationalTopic.addEventListener('change', function() {
+        const selectedTopic = this.value;
+        storyGenre.innerHTML = '<option selected>Choose a genre</option>';
+        storyGenre.disabled = true;
+
+        if (selectedTopic in genreOptions) {
+            genreOptions[selectedTopic].forEach(genre => {
+                const option = document.createElement('option');
+                option.value = genre;
+                option.textContent = genre;
+                storyGenre.appendChild(option);
+            });
+            storyGenre.disabled = false;
+        }
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM fully loaded and parsed");
+
+    // Cache elements
+    const elements = {
+        generateStorySettingBtn: document.getElementById('generateStorySetting'),
+        regenerateStorySettingBtn: document.getElementById('regenerateStorySetting'),
+        thinkingStorySetting: document.getElementById('thinkingStorySetting'),
+        storyGenre: document.getElementById('storyGenre'),
+        storyElement: document.getElementById('storyElement'),
+        educationalTopic: document.getElementById('educationalTopic'),
+        eventName: document.getElementById('eventName'),
+        eventDescription: document.getElementById('eventDescription'),
+        eventPurpose: document.getElementById('eventPurpose'),
+        generateCharactersBtn: document.getElementById('generateCharactersBtn'),
+        regenerateCharactersBtn: document.getElementById('regenerateCharactersBtn'),
+        thinkingCharacters: document.getElementById('thinkingCharacters'),
+        generatePersonas: document.getElementById('generatePersonas'),
+        regeneratePersonas: document.getElementById('regeneratePersonas'),
+        thinkingPersonas: document.getElementById('thinkingPersonas'),
+        accordion: document.getElementById('gameCreationAccordion'),
+        generateEventsBtn: document.getElementById('generateEventsBtn'),
+        // regenerateEventsBtn: document.getElementById('regenerateEventsBtn'),
+        thinkingEvents: document.getElementById('thinkingEvents'),
+        generatedEventsContent: document.getElementById('generatedEventsContent'),
+        seriesAEvents: document.getElementById('seriesAEvents'),
+        seriesBEvents: document.getElementById('seriesBEvents'),
+        seriesCEvents: document.getElementById('seriesCEvents'),
+        generateQuestsBtn: document.getElementById('generateQuestsBtn'),
+        regenerateQuestsBtn: document.getElementById('regenerateQuestsBtn'),
+        thinkingQuests: document.getElementById('thinkingQuests'),
+        questsAccordion: document.getElementById('questsAccordion'),
+        generatedQuestsContent: document.getElementById('generatedQuestsContent')
+    };
+
+    // Accordion functionality
+    const accordionItems = elements.accordion.querySelectorAll('.accordion-item');
+    accordionItems.forEach(item => {
+        const header = item.querySelector('.accordion-header');
+        const collapse = item.querySelector('.accordion-collapse');
+
+        header.addEventListener('click', () => {
+            const isOpen = collapse.classList.contains('show');
+            if (!isOpen) {
+                accordionItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.querySelector('.accordion-collapse').classList.remove('show');
+                        otherItem.querySelector('.accordion-button').classList.add('collapsed');
+                    }
+                });
+                collapse.classList.add('show');
+                header.querySelector('.accordion-button').classList.remove('collapsed');
+            }
+        });
+    });
+
+    // Placeholder update function
+    function updatePlaceholders() {
+        const { storyGenre, storyElement, eventName, eventDescription, eventPurpose } = elements;
+        const genre = storyGenre.value;
+        const element = storyElement.value;
+
+        if (genre && element) {
+            eventName.placeholder = `For example, "The ${genre} ${element} Summit"`;
+            eventDescription.placeholder = `A brief description of the ${genre}-themed event with ${element} elements...`;
+            eventPurpose.placeholder = `The official reason for the ${genre}-related gathering involving ${element}...`;
+        }
+    }
+
+    elements.storyGenre.addEventListener('change', updatePlaceholders);
+    elements.storyElement.addEventListener('change', updatePlaceholders);
+
+    // Thinking message functions
+    function showThinkingMessage(thinkingElement) {
+        thinkingElement.style.display = 'inline-block';
+    }
+
+    function hideThinkingMessage(thinkingElement) {
+        thinkingElement.style.display = 'none';
+    }
+
+    // Story setting generation
+    function generateStorySetting() {
+        const { storyGenre, storyElement, educationalTopic, thinkingStorySetting, generateStorySettingBtn, regenerateStorySettingBtn, eventName, eventDescription, eventPurpose } = elements;
+        const genre = storyGenre.value;
+        const element = storyElement.value;
+        const topic = educationalTopic ? educationalTopic.value : '';
+
+        if (!genre || !element || (educationalTopic && !topic)) {
+            alert('Please select all required fields before generating the story setting.');
+            return;
+        }
+
+        showThinkingMessage(thinkingStorySetting);
+
+        axios.post('/generate_story_setting', { genre, element, educationalTopic: topic })
+            .then(response => {
+                const data = response.data;
+                if (data.error) {
+                    console.error('Error:', data.error);
+                    alert('An error occurred. Please try again.');
+                } else {
+                    eventName.value = data.event_name || 'N/A';
+                    eventDescription.value = data.event_description || 'N/A';
+                    eventPurpose.value = data.event_purpose || 'N/A';
+                    generateStorySettingBtn.style.display = 'none';
+                    regenerateStorySettingBtn.style.display = 'inline-block';
+                }
+                hideThinkingMessage(thinkingStorySetting);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                hideThinkingMessage(thinkingStorySetting);
+            });
+    }
+
+    // Character generation
+    function generateCharacters() {
+        const { thinkingCharacters, generateCharactersBtn, regenerateCharactersBtn } = elements;
+        showThinkingMessage(thinkingCharacters);
+
+        fetch('/generate_characters', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(response => response.json())
+            .then(data => {
+                for (let i = 1; i <= 3; i++) {
+                    const npc = data[`npc_${i}`];
+                    if (npc) {
+                        document.getElementById(`character${i}Name`).textContent = npc.name || 'N/A';
+                        document.getElementById(`character${i}Gender`).textContent = npc.gender || 'N/A';
+                        document.getElementById(`character${i}Profession`).textContent = npc.profession || 'N/A';
+                        document.getElementById(`character${i}Expertise`).textContent = npc.expertise || 'N/A';
+                        const video = document.getElementById(`character${i}Video`);
+                        video.src = `/static/${npc.video || 'videos/default.mp4'}`;
+                        video.play().catch(e => console.error("Error playing video:", e));
+                    }
+                }
+                generateCharactersBtn.style.display = 'none';
+                regenerateCharactersBtn.style.display = 'inline-block';
+                hideThinkingMessage(thinkingCharacters);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while generating characters. Please try again.');
+                hideThinkingMessage(thinkingCharacters);
+            });
+    }
+
+    // Persona generation
+    function generatePersonas() {
+        const { thinkingPersonas } = elements;
+        showThinkingMessage(thinkingPersonas);
+
+        fetch('/generate_character_details', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(response => response.json())
+            .then(data => {
+                for (let i = 1; i <= 3; i++) {
+                    const npcData = data[`npc_${i}`];
+                    document.getElementById(`jobTitle${i}`).textContent = npcData.job_title;
+                    document.getElementById(`backstory${i}`).textContent = npcData.backstory;
+                    document.getElementById(`secret${i}`).textContent = npcData.secret;
+                    document.getElementById(`relationships${i}`).textContent = npcData.relationships;
+                    document.getElementById(`personality${i}`).textContent = npcData.personality;
+                    document.getElementById(`speakingStyle${i}`).textContent = npcData.speaking_style;
+                    document.getElementById(`hobby${i}`).textContent = npcData.hobby;
+                    document.getElementById(`artifact${i}`).textContent = npcData.artifact;
+                }
+                hideThinkingMessage(thinkingPersonas);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                hideThinkingMessage(thinkingPersonas);
+            });
+    }
+
+    // Event generation
+    elements.generateEventsBtn.addEventListener('click', function() {
+        elements.thinkingEvents.style.display = 'inline-block';
+        elements.generateEventsBtn.disabled = true;
+        // elements.regenerateEventsBtn.disabled = true;
+
+        fetch('/generate_events', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            elements.thinkingEvents.style.display = 'none';
+            elements.generateEventsBtn.style.display = 'none';
+            // elements.regenerateEventsBtn.style.display = 'inline-block';
+            // elements.regenerateEventsBtn.disabled = false;
+            displayGeneratedEvents(data.events);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error generating events: ' + error);
+            elements.thinkingEvents.style.display = 'none';
+            elements.generateEventsBtn.disabled = false;
+            // elements.regenerateEventsBtn.disabled = false;
+        });
+    });
+
+    // elements.regenerateEventsBtn.addEventListener('click', function() {
+    //     elements.thinkingEvents.style.display = 'inline-block';
+    //     elements.generateEventsBtn.disabled = true;
+    //     elements.regenerateEventsBtn.disabled = true;
+
+    //     fetch('/generate_events', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' }
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         elements.thinkingEvents.style.display = 'none';
+    //         elements.generateEventsBtn.style.display = 'none';
+    //         elements.regenerateEventsBtn.style.display = 'inline-block';
+    //         elements.regenerateEventsBtn.disabled = false;
+    //         displayGeneratedEvents(data.events);
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //         alert('Error generating events: ' + error);
+    //         elements.thinkingEvents.style.display = 'none';
+    //         elements.generateEventsBtn.disabled = false;
+    //         elements.regenerateEventsBtn.disabled = false;
+    //     });
+    // });
+
+    function displayGeneratedEvents(events) {
+        elements.generatedEventsContent.style.display = 'block';
+        
+        function displaySeries(seriesName, seriesEvents) {
+            let seriesHtml = `<h4>${seriesName}</h4>`;
+            for (let i = 1; i <= 3; i++) {
+                let event = seriesEvents[`event_${i}`];
+                seriesHtml += `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Event ${i}</h5>
+                            <p class="card-text">${event.story}</p>
+                            <p class="card-text"><small class="text-muted">Characters: ${event.char_list.join(', ')}</small></p>
+                        </div>
+                    </div>
+                `;
+            }
+            return seriesHtml;
+        }
+
+        elements.seriesAEvents.innerHTML = displaySeries('Series A', events.series_a);
+        elements.seriesBEvents.innerHTML = displaySeries('Series B', events.series_b);
+        elements.seriesCEvents.innerHTML = displaySeries('Series C', events.series_c);
+    }
+
+    // Event listeners
+    elements.generateStorySettingBtn.addEventListener('click', generateStorySetting);
+    elements.regenerateStorySettingBtn.addEventListener('click', generateStorySetting);
+    elements.generateCharactersBtn.addEventListener('click', generateCharacters);
+    elements.regenerateCharactersBtn.addEventListener('click', generateCharacters);
+    elements.generatePersonas.addEventListener('click', generatePersonas);
+    elements.regeneratePersonas.addEventListener('click', generatePersonas);
+    elements.generateQuestsBtn.addEventListener('click', generateQuests);
+    elements.regenerateQuestsBtn.addEventListener('click', generateQuests);
+
+    // Quests generation
+    function generateQuests() {
+    document.getElementById('thinkingQuests').style.display = 'block';
+    document.getElementById('generateQuestsBtn').disabled = true;
+    document.getElementById('regenerateQuestsBtn').disabled = true;
+
+    fetch('/quests', {
+      method: 'POST',
+    })
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('thinkingQuests').style.display = 'none';
+      document.getElementById('generateQuestsBtn').style.display = 'none';
+      document.getElementById('regenerateQuestsBtn').style.display = 'inline-block';
+      document.getElementById('regenerateQuestsBtn').disabled = false;
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      document.getElementById('generatedQuestsContent').style.display = 'block';
+
+      const questsAccordion = document.getElementById('questsAccordion');
+      questsAccordion.innerHTML = ''; // Clear previous content
+
+      Object.entries(data.events).forEach(([seriesKey, series], seriesIndex) => {
+                const seriesHtml = `
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading${seriesKey}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#collapse${seriesKey}" aria-expanded="false" aria-controls="collapse${seriesKey}">
+                                ${seriesKey.toUpperCase()}
+                            </button>
+                        </h2>
+                        <div id="collapse${seriesKey}" class="accordion-collapse collapse" aria-labelledby="heading${seriesKey}">
+                            <div class="accordion-body">
+                                ${Object.entries(series).map(([eventKey, event], eventIndex) => `
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Event ${eventIndex + 1}</h5>
+                                            <p><strong>Story Prompt:</strong> ${event.story_prompt}</p>
+                                            <p><strong>Question:</strong> ${event.question}</p>
+                                            <p><strong>Answer:</strong> ${event.answer}</p>
+                                            <p><strong>Additional Info:</strong> ${event.additional_info}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                questsAccordion.innerHTML += seriesHtml;
+});
+})
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('thinkingQuests').style.display = 'none';
+      document.getElementById('generateQuestsBtn').disabled = false;
+    //   document.getElementById('regenerateQuestsBtn').disabled = false;
+      alert(`An error occurred while generating quests: ${error.message}`);
+    });
+}
+});
+</script>
+{% endblock %}
+
+
+

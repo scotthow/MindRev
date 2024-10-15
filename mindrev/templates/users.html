@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}HTH Games - Users{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Users</h1>
+<ul class="list-group">
+    {% for user in users %}
+        <li class="list-group-item">{{ user.username }} ({{ user.email }})</li>
+    {% endfor %}
+</ul>
+{% endblock %}

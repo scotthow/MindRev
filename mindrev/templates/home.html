@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindRev</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'roboto', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        nav a {
+            margin-left: 1rem;
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            /* color: #ff6b6b; */
+            color: #16dddd; 
+        }
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80vh;
+        }
+        .hero-text {
+            flex: 1;
+        }
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            /* background-color: #ff6b6b; */
+            /* background-color: #ff4757; */
+            /* background-color: #D04A21; */
+            /* background-color: #ee5109;*/
+            background-color: #f20593;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .cta-button:hover {
+            /* background-color: #ff4757; */
+            background-color: #16dddd;
+        }
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 400px;
+        }
+        #animationContainer {
+            width: 300px;
+            height: 300px;
+            perspective: 1000px;
+        }
+        .flip-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 1s;
+            transform-style: preserve-3d;
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .flip-card-front {
+            background-color: #f0f0f0;
+        }
+        .flip-card-back {
+            background-color: #f0f0f0;
+            transform: rotateY(180deg);
+        }
+        .neural-net {
+            opacity: 1;
+        }
+        .node {
+            fill: #ff6b6b;
+        }
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+        }
+        .head-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .logo {
+        font-family: Arial, sans-serif;
+        font-size: 48px;
+        font-weight: bold;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+    }
+    .text-primary {
+            color: #ff00ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">MindRev</div>
+            <nav>
+                <a href="#home">Home</a>
+                <a class="nav-link" href="{{ url_for('users.login') }}">Log In</a>
+                <a href="#users">Dashboard</a>
+                <a class="nav-link" href="{{ url_for('npc_chat.npc_chat') }}">NPC Chat</a>
+            </nav>
+        </header>
+        <main class="hero">
+            <div class="hero-text">
+                <h1>Everyone Has<br>a Story</h1>
+                <p>Our innovative platform offers limitless storytelling possibilities for crafting immersive, narrative-based educational games. Whether you're an educator seeking to engage students, or a student looking for a unique and engaging way to learn a subject, our intuitive tools empower you to bring your ideas to life effortlessly.</p>
+                <p>Central to our solution lies the ability to create lifelike, engaging virtual personas powered by <span class="text-primary">CreativeAI</span>. These sophisticated characters interact with players, guiding them through captivating adventures, thought-provoking mysteries, and enriching educational experiences. You'll design Non-player Characters (NPCs) that are more than just story drivers; they become mentors, confidants, and sources of vital information, enriching the player's experience with natural, immersive interactions.</p>
+                <a href="{{ url_for('game_creation.game_creation') }}" class="btn cta-button">Create Your Game</a>
+            </div>
+            <div class="hero-image">
+                <div id="animationContainer">
+                    <div class="flip-card">
+                        <div class="flip-card-front"></div>
+                        <div class="flip-card-back">
+                            <img src="/static/images/Abigal_Loevinger_001.jpg" alt="Head placeholder" class="head-image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        gsap.from(".logo", {duration: 2, y: -50, opacity: 0, ease: "power3.out"});
+        gsap.from("nav a", {duration: 2, y: -50, opacity: 0, stagger: 0.3, ease: "power3.out"});
+        gsap.from(".hero-text", {duration: 2, x: -100, opacity: 0, delay: 1, ease: "power3.out"});
+
+        const images = [
+            
+            "/static/landing_page/Lala_Cowdery_F30_001.mp4",
+            "/static/landing_page/Mei_Chen_001.mp4",
+            "/static/landing_page/Cloe_Kelly_001.mp4",
+            "/static/landing_page/Justin_Fayek_001.mp4",
+            "/static/landing_page/Kaur_Charian_F30_001.mp4",
+            "/static/landing_page/Palmer_Perry_M30_001.mp4",
+
+            
+        ];
+
+        let currentImageIndex = 0;
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function createNeuralNet() {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("width", "280");
+            svg.setAttribute("height", "280");
+            svg.classList.add("neural-net");
+
+            const nodeRadius = 6;
+            const layers = [3, 4, 2];
+            const layerSpacing = 280 / (layers.length + 1);
+
+            for (let i = 0; i < layers.length; i++) {
+                const nodesInLayer = layers[i];
+                const layerX = (i + 1) * layerSpacing;
+
+                for (let j = 0; j < nodesInLayer; j++) {
+                    const node = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    node.setAttribute("cx", layerX);
+                    node.setAttribute("cy", (j + 1) * (280 / (nodesInLayer + 1)));
+                    node.setAttribute("r", nodeRadius);
+                    node.classList.add("node");
+                    svg.appendChild(node);
+
+                    if (i > 0) {
+                        const prevNodesInLayer = layers[i - 1];
+                        for (let k = 0; k < prevNodesInLayer; k++) {
+                            const link = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                            link.setAttribute("x1", layerX - layerSpacing);
+                            link.setAttribute("y1", (k + 1) * (280 / (prevNodesInLayer + 1)));
+                            link.setAttribute("x2", layerX);
+                            link.setAttribute("y2", (j + 1) * (280 / (nodesInLayer + 1)));
+                            link.classList.add("link");
+                            svg.appendChild(link);
+                        }
+                    }
+                }
+            }
+
+            return svg;
+        }
+
+        function animateNeuralNet() {
+            const container = document.querySelector(".flip-card-front");
+            container.innerHTML = ''; // Clear previous network
+
+            const neuralNet = createNeuralNet();
+            container.appendChild(neuralNet);
+
+            const nodeColor = getRandomColor();
+            const linkColor = getRandomColor();
+
+            gsap.to(neuralNet.querySelectorAll(".node"), {
+                fill: nodeColor,
+                duration: 1.5,
+                stagger: 0.1,
+                repeat: -1,
+                yoyo: true
+            });
+
+            gsap.to(neuralNet.querySelectorAll(".link"), {
+                stroke: linkColor,
+                strokeOpacity: 1,
+                duration: 1.5,
+                stagger: 0.05,
+                repeat: -1,
+                yoyo: true
+            });
+        }
+
+        function flipCard() {
+            const flipCard = document.querySelector(".flip-card");
+            const backImage = document.querySelector(".flip-card-back img");
+
+            if (flipCard.style.transform === "rotateY(180deg)") {
+                // Flip back to neural net
+                flipCard.style.transform = "rotateY(0deg)";
+                setTimeout(animateNeuralNet, 1500);
+            } else {
+                // Flip to random image
+                currentImageIndex = (currentImageIndex + 1) % images.length;
+                backImage.src = images[currentImageIndex];
+                flipCard.style.transform = "rotateY(180deg)";
+            }
+        }
+
+        // Start the animation and flipping
+        setTimeout(() => {
+            animateNeuralNet();
+            setInterval(flipCard, 3000);
+        }, 2000);
+    </script>
+</body>
+</html>
